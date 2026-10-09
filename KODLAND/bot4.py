@@ -1,0 +1,28 @@
+import discord
+import asyncio
+
+
+class MyClient(discord.Client):
+    # Suppress error on the User attribute being None since it fills up later
+    user: discord.ClientUser
+
+    async def on_ready(self):
+        print(f'Logged in as {self.user} (ID: {self.user.id})')
+        print('------')
+
+    async def on_message(self, message):
+        if message.content.startswith('!editme'):
+            msg = await message.channel.send('10')
+            await asyncio.sleep(3.0)
+            await msg.edit(content='40')
+
+    async def on_message_edit(self, before, after):
+        msg = f'**{before.author}** edited their message:\n{before.content} -> {after.content}'
+        await before.channel.send(msg)
+
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = MyClient(intents=intents)
+client.run('MTU1MDE1NTI2ODQzMDQ5OTkzMQ.GMjFHy.ixEFd1A6ts4L6MOPZTqHl78xOey0qugkNi2ZtA')
